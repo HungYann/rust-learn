@@ -1,0 +1,32 @@
+name: Rust Multi-platform Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build and Package for Linux x86_64
+        run: cargo build --release --target x86_64-unknown-linux-gnu
+        # Perform any additional steps required for packaging the Linux x86_64 binary
+
+      - name: Build and Package for Linux ARM64
+        run: cargo build --release --target aarch64-unknown-linux-gnu
+        # Perform any additional steps required for packaging the Linux ARM64 binary
