@@ -1,114 +1,102 @@
 
 ## 笔记一
 
-对于不固定的字节类型， 会默认放在堆上（成为堆上的一个资源)
+元组结构体：所谓元组结构体，也就是元组和结构体的结合体
 
 ```rust
+struct Color(i32, i32);
+
 fn main() {
-    let s1 = String::from("I am a superman");
-
-    let s2 = s1;
-
-    println!("{s1}");
-
-    println!("{s2}");
+    let _black = Color(0,  0);
 }
 ```
 
+什么是所有权？
 
-浅拷贝/内存安全：默认只进行值复制 ，rust中默认只保留最新的s2到字符串的指向。
-同时抹除s1到字符串的指向。
 
-Rust中，每一个值（资源）都有一个所有者。
+一句话解释：谁（获得着）控制这个数据的生死权利
 
-任何一个时刻，一个值只有一个所有者。
+在Rust中，每一个值都有一个决定其生命周期的唯一所有者（owner）
 
-当所有者所在任何域结束的时候，值会被释放掉。
+所有权的存在原因？
 
+- 跟踪代码的哪些部分正在使用heap的哪些数据
+- 最小化heap上的重复数据
+- 清理heap上未使用的数据以免空间不足
 
 ## 笔记二
 
-
-**移动还是复制** 
-
-默认做复制操作的有：
-
-所有的整数类型：比如u32 
-
-布尔类型：bool
-
-浮点类型：f32 、 f64
-
-字符串类型：char
-
-由以上类型组成的tuple
-
-
-## 笔记三
-
-所有权
-
-Rust中，每一个值（资源）都有一个所有者；
-
-任何一个时候，一个值只有一个所有者；
-
-当所有者所在作用域结束的时候，值会被释放掉；
-
-
-```rust 
-let b = &a;
-
-let c = b;
-```
-
+`struct`结构体
 
 ```rust
-fn main() {
-    let a = 10u32;
-
-    let b = &a;
-
-    let c = &&&&&a;
-
-    let d = &b;
-
-    let e = b;
-
-    println!("{a}");
-
-    println!("{b}");
-
-    println!("{c}");
-
-    println!("{d}");
-
-    println!("{e}");
+struct User {
+    active: bool,
+    username: String,
+    email: String,
+    sign_in_count: u32,
 }
 
+fn main() {
+    let active = true;
+    let username = String::from("someusername123");
+    let email = String::from("someuser@example123");
+    let user1 = User {
+        active,
+        username,
+        email,
+        sign_in_count: 1,
+    };
 
+    let user2 = User {
+        email: String::from("another@example.com"),
+        ..user1
+    };
+}
+```
+
+`enum`枚举
+
+
+`if let`
+```rust
+fn main() {
+    let mut optional = Some(0);
+
+    if let Some(i) = optional {
+        if i > 9 {
+            println!("Greater than 9, quit");
+            optional = None;
+        } else {
+            println!("t");
+        }
+    }
+}
 ```
 
 
-10
-10
-10
-10
-10
+`Vec`与HashMap
 
+```rust
+fn foo1(s: &str) {
 
-## 笔记四
+}
 
-引用的作用域是从它定义到它最后一次使用时结束
+fn foo2(s: &[u32]) {
 
+}
 
-## 笔记五 
+fn main() {
+    let s = String::from("aaa");
+    foo1(&s);
 
-用&和&mut来改进函数的定义
+    foo1("aaaabbb");
 
-如果一个函数参数接受的是可变引用，或所有权参数，那么它
-里面的逻辑一般都会对引用的资源进行修改。如果一个函数
-参数只接受不可变引用，那么它里面的逻辑，就一定不会修改
-被引用的资源。
+    let v: Vec<u32> = vec![1, 2, 3, 4, 5];
+    foo2(&v);
+
+    foo2(&[1, 2, 3, 4, 5]);
+}
+```
 
 
 
