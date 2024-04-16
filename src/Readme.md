@@ -1,103 +1,183 @@
 
 ## 笔记一
 
-元组结构体：所谓元组结构体，也就是元组和结构体的结合体
+泛型
 
 ```rust
-struct Color(i32, i32);
+fn largest<T: std::cmp::PartialOrd + Copy> (list: &Vec<T>) -> &T {
+    let mut largest = &list[0];
+
+    for item in list {
+        if *item > *largest {
+            largest = item;
+        }
+    }
+
+    largest
+}
 
 fn main() {
-    let _black = Color(0,  0);
+    let number_list = vec![32, 50, 25, 100, 65];
+    let result = largest(&number_list);
+
+    println!("The largest number is {}", result);
+
+
+    let char_list = vec!['y', 'm', 'a', 'q'];
+
+    let result = largest(&char_list);
+
+    println!("The largest char is {}", result);
 }
 ```
 
-什么是所有权？
-
-
-一句话解释：谁（获得着）控制这个数据的生死权利
-
-在Rust中，每一个值都有一个决定其生命周期的唯一所有者（owner）
-
-所有权的存在原因？
-
-- 跟踪代码的哪些部分正在使用heap的哪些数据
-- 最小化heap上的重复数据
-- 清理heap上未使用的数据以免空间不足
 
 ## 笔记二
 
-`struct`结构体
+结构体由一些字段组成。字段是有类型的，这个类型当然适用于泛型。因此，
+
+结构体中，是可以出现泛型的。
 
 ```rust
-struct User {
-    active: bool,
-    username: String,
-    email: String,
-    sign_in_count: u32,
+struct Point<T, U> {
+    x:T,
+    y:U,
 }
 
 fn main() {
-    let active = true;
-    let username = String::from("someusername123");
-    let email = String::from("someuser@example123");
-    let user1 = User {
-        active,
-        username,
-        email,
-        sign_in_count: 1,
-    };
-
-    let user2 = User {
-        email: String::from("another@example.com"),
-        ..user1
-    };
+    let _both_integer = Point{x:5, y:0};
+    let _both_float = Point{x:1.0, y:4.0};
 }
 ```
 
-`enum`枚举
+## 笔记三
 
+trait实际是对类型的约束，或者说是代表了一个类（满足条件的）类型。
 
-`if let`
 ```rust
-fn main() {
-    let mut optional = Some(0);
+trait Animal {
+    fn myself(self) -> Self;
 
-    if let Some(i) = optional {
-        if i > 9 {
-            println!("Greater than 9, quit");
-            optional = None;
+    fn eat(&self);
+
+    fn eat_mut(&mut self);
+}
+```
+
+
+```rust
+use std::fmt::Display;
+
+struct Pair<T> {
+    x:T,
+    y:T,
+}
+
+impl<T> Pair<T> {
+    fn new(x:T, y:T) ->Self {
+        Self {x, y}
+    }
+}
+
+impl <T: Display + PartialOrd> Pair<T> {
+    fn cmp_display(&self) {
+        if self.x >= self.y {
+            println!("The largest member is ={}", self.x);
         } else {
-            println!("t");
+            println!("The largest member is y={}", self.y);
         }
     }
 }
+
+```
+
+## 笔记四
+
+```rust
+pub trait Iterator {
+    type Item;
+
+    fn next(&mut self) -> Option<Self::Item>;
+}
 ```
 
 
-`Vec`与HashMap
-
 ```rust
-fn foo1(s: &str) {
-
+trait Animal {
+    fn talk(&self);
 }
 
-fn foo2(s: &[u32]) {
+struct Cat{}
 
+struct Dog{}
+
+impl Animal for Cat {
+    fn talk(&self) {
+        println!("meow");
+    }
+}
+
+impl Animal for Dog {
+    fn talk(&self) {
+        println!("bark");
+    }
+}
+
+fn animal_talk<T: Animal>(a: &T) {
+    a.talk();
 }
 
 fn main() {
-    let s = String::from("aaa");
-    foo1(&s);
+    let d = Dog{};
+    let c = Cat{};
 
-    foo1("aaaabbb");
-
-    let v: Vec<u32> = vec![1, 2, 3, 4, 5];
-    foo2(&v);
-
-    foo2(&[1, 2, 3, 4, 5]);
+    animal_talk(&d);
+    animal_talk(&c);
 }
 ```
+## 笔记五
 
+ ```rust
+ trait TraitA {
+    fn do_something(&self);
+}
+
+struct TypeA;
+
+struct TypeB;
+
+impl TraitA for TypeA {
+    fn do_something(&self) {
+        println!("TypeA is dothing something");
+    }
+}
+
+impl TraitA for TypeB {
+    fn do_something(&self) {
+        println!("TypeB is dothing something");
+    }
+}
+
+fn main() {
+    let type_a = TypeA;
+
+    let type_b = TypeB;
+
+    let a: &dyn TraitA = &type_a;
+    let b: &dyn TraitA = &type_b;
+
+    a.do_something();
+    b.do_something();
+}
+ ```
+
+## 笔记六
+
+- TypeT 实现了 TraitA 中定义的所有方法。这意味着 TypeT 满足了 TraitA 的所有要求。
+
+- 当一个函数接受 &dyn TraitA 类型的参数时, 你可以传入一个 &TypeT 类型的值, 因为 TypeT 实现了 TraitA。
+
+- 你可以将 TypeT 作为 TraitA 的具体实现来使用, 也可以将其作为一个实现了 TraitA 的类型来使用。
 
 
 
