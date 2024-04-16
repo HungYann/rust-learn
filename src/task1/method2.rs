@@ -1,43 +1,37 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct Point {
-    x: i32,
-    y: i32,
+// 定义一个 trait,包含三种类型的共同方法
+trait MyTrait {
+    fn do_something(&self);
 }
 
-impl std::ops::Add for Point {
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self {
-        Point {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
+// 为三种类型分别实现 MyTrait
+impl MyTrait for TypeA {
+    fn do_something(&self) {
+        println!("TypeA is doing something");
     }
 }
 
-trait Addable {
-    fn add(&self, other: &Self) -> Self;
+impl MyTrait for TypeB {
+    fn do_something(&self) {
+        println!("TypeB is doing something");
+    }
 }
 
-impl Addable for Point {
-    fn add(&self, other: &Self) -> Self {
-        Point {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
+impl MyTrait for TypeC {
+    fn do_something(&self) {
+        println!("TypeC is doing something");
     }
 }
 
 fn main() {
-    let p1 = Point { x: 1, y: 2 };
-    let p2 = Point { x: 3, y: 4 };
+    // 创建三个不同类型的实例,并放入 Vec 中
+    let my_types: Vec<Box<dyn MyTrait>> = vec![
+        Box::new(TypeA),
+        Box::new(TypeB),
+        Box::new(TypeC),
+    ];
 
-    // 使用 + 运算符直接相加
-    let p3 = p1 + p2;
-    println!("p1 + p2 = {:?}", p3);
-
-    // 使用 Trait Object 调用 add 方法
-    let addable: &dyn Addable = &p1;
-    let p4 = addable.add(&p2);
-    println!("Using Trait Object: {:?}", p4);
+    // 遍历 Vec,并调用相应类型的方法
+    for my_type in my_types {
+        my_type.do_something();
+    }
 }

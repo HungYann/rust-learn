@@ -20,7 +20,7 @@ fn main() {
     let numbers = vec![
         MyNumber::Int(5),
         MyNumber::Float(3.14),
-        MyNumber::String(String::from("Hello, ")),
+        MyNumber::String(String::from("Test ")),
     ];
 
     for number in numbers {
