@@ -4,10 +4,8 @@ struct Point {
     y: i32,
 }
 
-impl std::ops::Add for Point {
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self {
+impl Add for Point {
+    fn add(&self) -> Self {
         Point {
             x: self.x + other.x,
             y: self.y + other.y,
@@ -39,5 +37,4 @@ fn main() {
     // 使用 Trait Object 调用 add 方法
     let addable: &dyn Addable = &p1;
     let p4 = addable.add(&p2);
-    println!("Using Trait Object: {:?}", p4);
 }
