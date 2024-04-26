@@ -1,12 +1,26 @@
-pub fn print_characters() {
-    for char1 in 'a'..='z' {
-        println!("{}", char1);
-        for char2 in 'A'..='z' {
-            println!("{}", char2);
-        }
-    }
-}
-
 fn main() {
-    print_characters();
+   let mut count = 0;
+   'counting_up: loop {
+      println!("count ={}",count);
+
+      let mut remaining = 10;
+
+      loop {
+         println!("remaing = {}", remaining);
+
+         if remaining == 9 {
+            break;
+         }
+
+         if count == 2 {
+            break 'counting_up;
+         }
+
+         remaining -= 1;
+      }
+
+      count += 1;
+   }
+
+   println!("End count = {}", count);
 }
