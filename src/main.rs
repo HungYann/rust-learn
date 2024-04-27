@@ -1,26 +1,21 @@
 fn main() {
-   let mut count = 0;
-   'counting_up: loop {
-      println!("count ={}",count);
+   let mut v: Vec<i32> = Vec::new();
 
-      let mut remaining = 10;
+   let mut v2 = vec![1, 2, 3];
 
-      loop {
-         println!("remaing = {}", remaining);
+   let v3 = vec!["Hello", "World"];
 
-         if remaining == 9 {
-            break;
-         }
+   v.push(5);
 
-         if count == 2 {
-            break 'counting_up;
-         }
+   v.append(&mut v2);
 
-         remaining -= 1;
-      }
-
-      count += 1;
+   for e in &mut v{
+      *e = *e * 2;
+      println!("{e}");
    }
 
-   println!("End count = {}", count);
+   println!("*******");
+   for e in v.iter() {
+     println!("{e}");
+    }
 }
